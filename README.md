@@ -19,19 +19,19 @@ Zig framework for generating png images (single or multiple frames.)
 
 
 # Usage
-```
+``` bash
 zig build run
 ```
 
 Or if you have [entr](https://eradman.com/entrproject/) installed:
-```
+``` bash
 ./autopng.sh
 ```
 to automatically rebuild and regenerate out/out.png each time the main.zig is saved.
 
 
 # Example Code
-```
+``` zig
 pub fn main() !void {
     try renderer.render(.{
         .Shader = SimpleBlendShader,
