@@ -66,6 +66,10 @@ pub fn Screen(comptime Cell: type) type {
             return self.indexi(self.xIndex(x), self.yIndex(y));
         }
 
+        pub fn indexOff(self: *const Self, x: f64, y: f64, xo: isize, yo: isize) ?usize {
+            return self.indexi(self.xIndex(x) + xo, self.yIndex(y) + yo);
+        }
+
         fn indexRef(self: *Self, i: ?usize) ?*Cell {
             if (i) |j| {
                 return &self.cells[j];
@@ -90,6 +94,68 @@ pub fn Screen(comptime Cell: type) type {
 
         pub fn refSkew(self: *Self, x: f64, y: f64, skew: f64) ?*Cell {
             return self.indexRef(self.indexi(self.xIndexSkew(x, skew), self.yIndexSkew(y, skew)));
+        }
+
+        pub fn getOff(self: *const Self, x: f64, y: f64, xo: isize, yo: isize) ?Cell {
+            return self.getIndex(self.indexOff(x, y, xo, yo));
+        }
+
+        pub fn refOff(self: *Self, x: f64, y: f64, xo: isize, yo: isize) ?*Cell {
+            return self.indexRef(self.indexOff(x, y, xo, yo));
+        }
+
+        pub fn neighbors4(self: *const Self, x: f64, y: f64) [4]?Cell {
+            const xi = self.xIndex(x);
+            const yi = self.yIndex(y);
+            return [4]?Cell{
+                self.getIndex(self.index(xi, yi - 1)),
+                self.getIndex(self.index(xi - 1, yi)),
+                self.getIndex(self.index(xi + 1, yi)),
+                self.getIndex(self.index(xi, yi + 1)),
+            };
+        }
+
+        pub fn neighbors5(self: *const Self, x: f64, y: f64) [5]?Cell {
+            const xi = self.xIndex(x);
+            const yi = self.yIndex(y);
+            return [5]?Cell{
+                self.getIndex(self.index(xi, yi - 1)),
+                self.getIndex(self.index(xi - 1, yi)),
+                self.getIndex(self.index(xi, yi)),
+                self.getIndex(self.index(xi + 1, yi)),
+                self.getIndex(self.index(xi, yi + 1)),
+            };
+        }
+
+        pub fn neighbors8(self: *const Self, x: f64, y: f64) [8]?Cell {
+            const xi = self.xIndex(x);
+            const yi = self.yIndex(y);
+            return [8]?Cell{
+                self.getIndex(self.index(xi - 1, yi - 1)),
+                self.getIndex(self.index(xi, yi - 1)),
+                self.getIndex(self.index(xi + 1, yi - 1)),
+                self.getIndex(self.index(xi - 1, yi)),
+                self.getIndex(self.index(xi + 1, yi)),
+                self.getIndex(self.index(xi - 1, yi + 1)),
+                self.getIndex(self.index(xi, yi + 1)),
+                self.getIndex(self.index(xi + 1, yi + 1)),
+            };
+        }
+
+        pub fn neighbors9(self: *const Self, x: f64, y: f64) [9]?Cell {
+            const xi = self.xIndex(x);
+            const yi = self.yIndex(y);
+            return [9]?Cell{
+                self.getIndex(self.index(xi - 1, yi - 1)),
+                self.getIndex(self.index(xi, yi - 1)),
+                self.getIndex(self.index(xi + 1, yi - 1)),
+                self.getIndex(self.index(xi - 1, yi)),
+                self.getIndex(self.index(xi, yi)),
+                self.getIndex(self.index(xi + 1, yi)),
+                self.getIndex(self.index(xi - 1, yi + 1)),
+                self.getIndex(self.index(xi, yi + 1)),
+                self.getIndex(self.index(xi + 1, yi + 1)),
+            };
         }
     };
 }
