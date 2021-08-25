@@ -3,6 +3,7 @@ pub const Resolutions = struct {
         pub const square = Res.init(1080, 1080);
         pub const portrait = AspectRatio.init(8, 10).shortSide(1080).portrait();
         pub const landscape = AspectRatio.init(100, 191).longSide(1080);
+        pub const story = AspectRatio.init(16, 9).shortSide(1080).portrait();
     };
     pub const Prints = struct {
         pub const _24x36 = Res.init(24, 36).scale(600);
