@@ -60,6 +60,15 @@ pub const Resolutions = struct {
         pub const vga = Res.init(640, 480);
         pub const svga = Res.init(800, 600);
     };
+    pub const YouTube = struct {
+        pub const _2160p = Res.init(3840, 2160);
+        pub const _1440p = Res.init(2560, 1440);
+        pub const _1080p = Res.init(1920, 1080);
+        pub const _720p = Res.init(1280, 720);
+        pub const _480p = Res.init(854, 480);
+        pub const _360p = Res.init(640, 360);
+        pub const _240p = Res.init(426, 240);
+    };
 };
 
 pub const AspectRatio = struct {
