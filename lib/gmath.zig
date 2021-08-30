@@ -361,5 +361,37 @@ pub fn gmath(comptime T: type) type {
                 return (t * (2 * y0 + xc) + (2 * xc - 3 * y0)) * t * t + y0;
             }
         }
+
+        pub const Fma = struct {
+            const Self = @This();
+
+            m: T,
+            a: T,
+
+            pub inline fn apply(self: Self, x: T) T {
+                return x * self.m + self.a;
+            }
+
+            pub fn mix(lowOut: anytype, highOut: anytype) Self {
+                return .{ .m = highOut - lowOut, .a = lowOut };
+            }
+
+            pub fn coMix(lowIn: anytype, highIn: anytype) Self {
+                const m = 1.0 / (highIn - lowIn);
+                return .{ .m = m, .a = -lowIn * m };
+            }
+
+            pub fn add(self: Self, x: T) Self {
+                return .{ .m = self.m, .a = self.a + x };
+            }
+
+            pub fn mul(self: Self, x: T) Self {
+                return .{ .m = self.m * x, .a = self.a * x };
+            }
+
+            pub fn neg(self: Self) Self {
+                return .{ .m = -self.m, .a = -self.a };
+            }
+        };
     };
 }

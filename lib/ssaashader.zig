@@ -5,18 +5,12 @@ const ShaderConfig = @import("shaderconfig.zig").ShaderConfig;
 
 const Jazbz = @import("jabz.zig").Jazbz(f64);
 const Srgb = @import("jabz.zig").Srgb(u8);
-const gmath = @import("gmath.zig").gmath(f64);
+const unitbounds = @import("unitbounds.zig");
 
-pub fn SsaaShader(width: f64, height: f64, ssaa: usize, comptime T: type) type {
+pub fn SsaaShader(width: usize, height: usize, ssaa: usize, comptime T: type) type {
     const mixVectors = makeMixVectors(width, height, ssaa);
     const meanFactor = 1.0 / @intToFloat(f64, mixVectors.len);
-
-    const wider = width > height;
-    const taller = height > width;
-    const x0 = if (wider) (width - height) / 2 else 0;
-    const y0 = if (taller) (height - width) / 2 else 0;
-    const x1 = if (wider) width - x0 else width;
-    const y1 = if (taller) height - y0 else height;
+    const ub = unitbounds.PosUTo01.forCenter(width, height);
 
     return struct {
         const Self = @This();
@@ -34,12 +28,11 @@ pub fn SsaaShader(width: f64, height: f64, ssaa: usize, comptime T: type) type {
         }
 
         pub fn shade(self: *const Self, x: usize, y: usize) Srgb {
-            const x01 = gmath.coMix(x0, x1, @intToFloat(f64, x));
-            const y01 = gmath.coMix(y0, y1, @intToFloat(f64, y));
+            const pos = ub.toPos01(x, y);
 
             var jab = Jazbz{};
             for (mixVectors) |mv| {
-                jab = Jazbz.JazbzField.add(jab, self.chain.shade(x01 + mv.x, y01 + mv.y));
+                jab = Jazbz.JazbzField.add(jab, self.chain.shade(pos.x + mv.x, pos.y + mv.y));
             }
 
             jab.j *= meanFactor;
@@ -52,10 +45,10 @@ pub fn SsaaShader(width: f64, height: f64, ssaa: usize, comptime T: type) type {
 
 const MixVector = struct { x: f64, y: f64 };
 
-fn makeMixVectors(width: f64, height: f64, comptime n: usize) [n * n]MixVector {
+fn makeMixVectors(width: usize, height: usize, comptime n: usize) [n * n]MixVector {
     const nf = @intToFloat(f64, n);
-    const xScale = 1 / (nf * width);
-    const yScale = 1 / (nf * height);
+    const xScale = 1 / (nf * @intToFloat(f64, width));
+    const yScale = 1 / (nf * @intToFloat(f64, height));
     var result: [n * n]MixVector = undefined;
     var y: usize = 0;
     while (y < n) : (y += 1) {
