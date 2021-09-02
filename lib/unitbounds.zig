@@ -69,8 +69,8 @@ pub const Pos01ToI = struct {
 
     pub inline fn toPosI(self: Self, x: f64, y: f64) PosI {
         return .{
-            .x = @floatToInt(isize, self.xf.apply(x)),
-            .y = @floatToInt(isize, self.yf.apply(y)),
+            .x = @floatToInt(isize, @floor(self.xf.apply(x))),
+            .y = @floatToInt(isize, @floor(self.yf.apply(y))),
         };
     }
 };
